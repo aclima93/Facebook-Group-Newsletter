@@ -4,27 +4,6 @@ import json  # for parsing retrieved data
 import time  # for current time
 
 
-class FeedPost:
-    def __init__(self, id, created_time, from_author, story, caption, description, message, link, picture, object_id,
-                 source):
-        "information about the post"
-        self.id = id
-        self.created_time = created_time
-        self.from_author = from_author
-
-        "the post itself"
-        self.story = story
-        self.caption = caption
-        self.description = description
-        self.message = message
-
-        "sweet addtional information"
-        self.link = link
-        self.picture = picture
-        self.object_id = object_id
-        self.source = source
-
-
 def file2string(filepath):
     with open(filepath, 'r') as file:
         return file.read().replace('\n', '')
@@ -38,9 +17,9 @@ def get_comments(id):
     # get replies for each comment
     for reply in comments_dict["data"]:
         if "id" in reply:
-            comments = get_comments(reply["id"])
-            if bool(comments):  # check for empty comments
-                reply["comments"] = comments
+            replies = get_comments(reply["id"])
+            if bool(replies):  # check for empty replies
+                reply["replies"] = replies
 
     return comments_dict["data"]
 
@@ -69,6 +48,6 @@ if __name__ == "__main__":
                 story["comments"] = comments
 
     with open('feed.json', 'w') as outfile:
-        json.dump(feed, outfile)
+        json.dump(feed["data"], outfile)
 
     print("Finished fetching posts.")
