@@ -9,14 +9,23 @@
 
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
             <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
+            <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/> -->
+
 
             <body>
 
                 <!-- Header -->
                 <xsl:call-template name="header"/>
 
-                <!-- Story Data -->
-                <xsl:apply-templates select="objects/stories"/>
+                <xsl:choose>
+                    <xsl:when test="objects/stories">
+                        <!-- Story Data -->
+                        <xsl:apply-templates select="objects/stories"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        Esta semana não houve actividade no grupo.
+                    </xsl:otherwise>
+                </xsl:choose>
 
                 <!-- Footer -->
                 <xsl:call-template name="footer"/>
@@ -29,116 +38,96 @@
     <xsl:template match="stories">
 
         <!-- Story -->
-        <header class="w3-container w3-blue">
+        <div class="w3-container w3-blue w3-margin-bottom">
             <h2> <xsl:value-of select="@story"/> </h2>
-        </header>
-        <div class="w3-container w3-row-padding w3-margin">
-
-            <!-- Message -->
-            <div class="w3-third" align="center">
-                <div class="w3-card-4">
-                    <header class="w3-container w3-light-blue">
-                        <h3>Nome</h3>
-                    </header>
-                    <div class="w3-container">
-                        <p>
-                            <xsl:value-of select="@message"/>
-                        </p>
-                    </div>
-                </div>
-            </div>
 
             <!-- Link -->
-            <div class="w3-container w3-row-padding w3-margin">
-                <div class="w3-card-4">
-
-                    <xsl:variable name="hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
-                    <div class="w3-container">
-                        <p><xsl:value-of select="@summary_data" disable-output-escaping="no"/></p>
-                        <div align="center">
-                            <p><a href="{$hyperlink}" target="_blank">Link</a></p>
-                        </div>
-                    </div>
+            <!--
+            <div class="w3-container">
+                <xsl:variable name="story_hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
+                <p><xsl:value-of select="@summary_data" disable-output-escaping="no"/></p>
+                <div align="center">
+                    <p><a href="{$story_hyperlink}" target="_blank">Story Link</a></p>
                 </div>
             </div>
+            -->
 
+            <!-- Message -->
+            <div class="w3-container w3-row-padding w3-margin-left w3-white">
+                <xsl:value-of select="@message"/>
+
+
+                <xsl:if test="comments">
+                    <div class="w3-margin-top w3-container w3-indigo">
+                        <h4>Comentários</h4>
+
+                        <!-- template for comments -->
+                        <xsl:apply-templates select="comments"/>
+
+                    </div>
+                </xsl:if>
+
+            </div>
         </div>
 
-        <div class="w3-margin-top">
-            <header class="w3-container w3-blue">
-                <h2>Comentários</h2>
-            </header>
-
-            <!-- template for comments -->
-            <xsl:apply-templates select="comments"/>
-
-        </div>
+        <hr/>
 
     </xsl:template>
 
     <xsl:template match="comments">
 
-        <table>
 
-            <tr>
-                <td>
-                    <!-- template for from -->
-                    <xsl:apply-templates select="from"/>
-                </td>
+        <div class="w3-margin-top w3-container w3-blue">
 
-                <td>
-                    <b>
-                        <xsl:value-of select="created_time"/>
-                    </b>
-                </td>
-                <td>
-                    <xsl:value-of select="message"/>
-                </td>
-            </tr>
+            <div class="w3-container" >
 
-            <tr>
-                <!-- template for replies -->
-                <xsl:apply-templates select="replies"/>
-            </tr>
+                <!-- template for from -->
+                <xsl:apply-templates select="from"/>
+                <br/>
+                <xsl:value-of select="@created_time"/>
 
-        </table>
+            </div>
+
+            <div class="w3-margin-top w3-container w3-white">
+                <xsl:value-of select="@message"/>
+
+                <xsl:if test="replies">
+                    <div class="w3-margin-bottom w3-container w3-margin-left w3-indigo">
+                        <!-- template for replies -->
+                        <h4>Respostas ao comentário</h4>
+
+                        <xsl:apply-templates select="replies"/>
+                    </div>
+                </xsl:if>
+            </div>
+
+        </div>
 
     </xsl:template>
 
     <xsl:template match="from">
 
-        <div class="w3-row-padding w3-margin">
-            <div class="w3-card-4">
-
-                <xsl:variable name="hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
-                <header class="w3-container w3-light-blue">
-                    <a href="{$hyperlink}" target="_blank"> <h4> <xsl:value-of select="name"/> </h4> </a>
-                </header>
-
-            </div>
-        </div>
+        <xsl:variable name="person_hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
+        <a href="{$person_hyperlink}" target="_blank"> <xsl:value-of select="@name"/></a>
 
     </xsl:template>
 
     <xsl:template match="replies">
 
-        <table>
-            <tr>
-                <td>
-                    <!-- template for from -->
-                    <xsl:apply-templates select="from"/>
-                </td>
+        <div class="w3-margin-top w3-container w3-blue">
 
-                <td>
-                    <b>
-                        <xsl:value-of select="created_time"/>
-                    </b>
-                </td>
-                <td>
-                    <xsl:value-of select="message"/>
-                </td>
-            </tr>
-        </table>
+            <div class="w3-container" >
+                <!-- template for from -->
+                <xsl:apply-templates select="from"/>
+                <br/>
+                <xsl:value-of select="@created_time"/>
+
+            </div>
+
+            <div class="w3-margin-top w3-container w3-white">
+                <xsl:value-of select="@message"/>
+            </div>
+        </div>
 
     </xsl:template>
 
