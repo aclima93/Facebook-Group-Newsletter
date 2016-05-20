@@ -1,6 +1,7 @@
 import sys
 import json
 import xml.dom.minidom
+import lxml.etree as ET
 
 def dict2xml(d, root_node=None):
     """
@@ -60,11 +61,25 @@ if __name__ == "__main__":
     # convert json dict to xml
     feed_xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<?xml-stylesheet type="text/xsl" href="feed.xsl" ?>' + dict2xml(feed_dict)
 
+    # get pretty printed XML document
+    xml = xml.dom.minidom.parseString(feed_xml.encode("UTF-8"))
+    pretty_xml_as_string = xml.toprettyxml()
+
     # save xml as a file
     with open('feed.xml', 'w') as outfile:
 
-        xml = xml.dom.minidom.parseString(feed_xml.encode("UTF-8"))
-        pretty_xml_as_string = xml.toprettyxml()
-
         outfile.write(pretty_xml_as_string.encode("UTF-8"))
+        outfile.close()
+
+    # convert XML to HTML with regard to XSL
+    dom = ET.parse('feed.xml')
+    xslt = ET.parse('feed.xsl')
+    transform = ET.XSLT(xslt)
+    newdom = transform(dom)
+    http_string = ET.tostring(newdom, pretty_print=True)
+
+    # save html as a file
+    with open('feed.html', 'w') as outfile:
+
+        outfile.write(http_string.encode("UTF-8"))
         outfile.close()
