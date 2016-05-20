@@ -10,7 +10,7 @@ def dict2xml(d, root_node=None):
     wrap = False if None == root_node or isinstance(d, list) else True
     root = 'objects' if None == root_node else root_node
     root_singular = root[:-1] if 's' == root[-1] and None == root_node else root
-    xml = ''
+    xml_str = ''
     children = []
 
     if isinstance(d, dict):
@@ -21,13 +21,13 @@ def dict2xml(d, root_node=None):
                 children.append(dict2xml(value, key))
             else:
                 try:
-                    xml = xml + ' ' + key + '="' + value + '"'
+                    xml_str = xml_str + ' ' + key + '="' + value + '"'
                 except TypeError:
-                    xml = xml + ' ' + key + '="' + str(value) + '"'
+                    xml_str = xml_str + ' ' + key + '="' + str(value) + '"'
                 except UnicodeDecodeError:
-                    xml = xml + ' ' + key + '="' + value.encode('utf-8') + '"'
+                    xml_str = xml_str + ' ' + key + '="' + value.encode('utf-8') + '"'
                 except UnicodeEncodeError:
-                    xml = xml + ' ' + key + '="' + value.decode('utf-8') + '"'
+                    xml_str = xml_str + ' ' + key + '="' + value.decode('utf-8') + '"'
     else:
         for value in d:
             children.append(dict2xml(value, root_singular))
@@ -35,16 +35,16 @@ def dict2xml(d, root_node=None):
     end_tag = '>' if 0 < len(children) else '/>'
 
     if wrap or isinstance(d, dict):
-        xml = '<' + root + xml + end_tag
+        xml_str = '<' + root + xml_str + end_tag
 
     if 0 < len(children):
         for child in children:
-            xml = xml + child
+            xml_str = xml_str + child
 
         if wrap or isinstance(d, dict):
-            xml = xml + '</' + root + '>'
+            xml_str = xml_str + '</' + root + '>'
 
-    return xml
+    return xml_str
 
 
 def file2string(filepath):
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     feed_dict = {"stories": json.loads(file2string(sys.argv[1]))}
 
     # convert json dict to xml
-    feed_xml = '<?xml version="1.0" encoding="UTF-8"?>' + dict2xml(feed_dict)
+    feed_xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<?xml-stylesheet type="text/xsl" href="feed.xsl" ?>' + dict2xml(feed_dict)
 
     # save xml as a file
     with open('feed.xml', 'w') as outfile:
