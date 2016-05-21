@@ -39,9 +39,9 @@ def get_extension_from_type(type_string):
 
 def get_type(image_url):
     content_type = get_contenttype(image_url)
-    if "image" in content_type or "video" in content_type:
+    if content_type is not None and (("image" in content_type) or ("video" in content_type)):
         return get_extension_from_type(content_type)
     mimetypes = get_mimetype(image_url)
-    if mimetypes in valid_types:
+    if mimetypes is not None and (("image" in mimetypes) or ("video" in mimetypes)):
         return get_extension_from_type(mimetypes)
     return None
