@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# get an access token for a user belonging to the target group
+python get_access_token.py app_id.txt app_secret.txt profile_id.txt
+
 # get posts from facebook group
 python get_posts.py access_token.txt group_id.txt
 
