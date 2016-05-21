@@ -55,11 +55,15 @@ def file2string(filepath):
 
 if __name__ == "__main__":
 
+    print('Generating newsletter...')
+
     # load json file to dict
     feed_dict = {"stories": json.loads(file2string(sys.argv[1]))}
 
     # convert json dict to xml
-    feed_xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<?xml-stylesheet type="text/xsl" href="feed.xsl" ?>' + dict2xml(feed_dict)
+    feed_xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+    feed_xml += '<?xml-stylesheet type="text/xsl" href="feed.xsl" ?>\n'
+    feed_xml += dict2xml(feed_dict)
 
     # get pretty printed XML document
     xml = xml.dom.minidom.parseString(feed_xml.encode("UTF-8"))
@@ -83,3 +87,5 @@ if __name__ == "__main__":
 
         outfile.write(http_string.encode("UTF-8"))
         outfile.close()
+
+    print('Finished generating newsletter.')
