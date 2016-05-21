@@ -15,7 +15,7 @@
     <xsl:template name="footer">
 
         <!-- Developer Information -->
-        <div class="w3-margin-top">
+        <div class="w3-margin-top w3-white">
             <header class="w3-container w3-black">
                 <h2>Developer</h2>
             </header>

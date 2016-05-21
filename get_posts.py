@@ -11,7 +11,7 @@ def file2string(filepath):
 
 def get_picture_or_video(id):
     # get picture and video for this id
-    url = "https://graph.facebook.com/v2.6/" + id + "?fields=source&access_token=" + access_token
+    url = "https://graph.facebook.com/v2.6/" + id + "?fields=source&access_token=" + ACCESS_TOKEN
     picture_video_dict = json.loads(urllib2.urlopen(url).read())  # read content from url and load it as JSON
 
     if "source" in picture_video_dict:
@@ -19,9 +19,9 @@ def get_picture_or_video(id):
         picture_video_dict["source"] = escape(picture_video_dict["source"]) # escape the characters in the URL for XML later on
 
         mime_type = hr.get_type(picture_video_dict["source"])
-        picture_video_dict["mime_type"] = mime_type
-
         if mime_type is not None:
+
+            picture_video_dict["mime_type"] = mime_type
             if "image" in mime_type:
                 picture_video_dict["source_type"] = "image"
             elif "video" in mime_type:
@@ -32,7 +32,7 @@ def get_picture_or_video(id):
 
 def get_comments_and_replies(id):
     # get comments for this id
-    comments_url = "https://graph.facebook.com/v2.6/" + id + "/comments?access_token=" + access_token
+    comments_url = "https://graph.facebook.com/v2.6/" + id + "/comments?access_token=" + ACCESS_TOKEN
     comments_dict = json.loads(urllib2.urlopen(comments_url).read())
 
     # get replies for each comment
@@ -65,15 +65,15 @@ if __name__ == "__main__":
     print("Fetching posts...")
 
     # format HTTP GET request for feed stories
-    access_token = file2string(sys.argv[1])
-    group_id = file2string(sys.argv[2])
+    ACCESS_TOKEN = file2string(sys.argv[1])
+    GROUP_ID = file2string(sys.argv[2])
 
     cur_time = round(time.time())
     num_seconds = 7 * 24 * 60 * 60  # a week in seconds = 604800
     a_week_ago_time = round(cur_time - num_seconds)
 
-    url = "https://graph.facebook.com/v2.6/" + group_id + "/feed?date_format=U&since=" + str(a_week_ago_time) + \
-          "&until=" + str(cur_time) + "&access_token=" + access_token
+    url = "https://graph.facebook.com/v2.6/" + GROUP_ID + "/feed?date_format=U&since=" + str(a_week_ago_time) + \
+          "&until=" + str(cur_time) + "&access_token=" + ACCESS_TOKEN
 
     feed = json.loads(urllib2.urlopen(url).read())
     feed_data = get_additional_data(feed["data"])

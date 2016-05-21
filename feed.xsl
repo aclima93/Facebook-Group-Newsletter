@@ -23,7 +23,7 @@
                         <xsl:apply-templates select="objects/stories"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        Esta semana não houve actividade no grupo.
+                        <p><b>Esta semana não houve actividade no grupo.</b></p>
                     </xsl:otherwise>
                 </xsl:choose>
 
@@ -41,21 +41,12 @@
         <div class="w3-container w3-blue w3-margin-bottom">
             <h2> <xsl:value-of select="@story"/> </h2>
 
-            <!-- Link -->
-            <!--
-            <div class="w3-container">
-                <xsl:variable name="story_hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
-                <p><xsl:value-of select="@summary_data" disable-output-escaping="no"/></p>
-                <div align="center">
-                    <p><a href="{$story_hyperlink}" target="_blank">Story Link</a></p>
-                </div>
-            </div>
-            -->
-
             <!-- Message -->
             <div class="w3-container w3-row-padding w3-margin-left w3-white">
                 <xsl:value-of select="@message"/>
 
+                <!-- Image or Video -->
+                <xsl:apply-templates select="picture_video"/>
 
                 <xsl:if test="comments">
                     <div class="w3-margin-top w3-container w3-indigo">
@@ -74,10 +65,45 @@
 
     </xsl:template>
 
+    <xsl:template match="picture_video">
+
+        <xsl:if test="@source">
+            <xsl:variable name="source_variable"><xsl:value-of select="@source"/></xsl:variable>
+            <xsl:variable name="mime_type_variable"><xsl:value-of select="@mime_type"/></xsl:variable>
+            <xsl:if test="@mime_type">
+                <div align="center">
+
+                    <xsl:choose>
+                        <xsl:when test="@source_type = 'image' ">
+                            <img src="{$source_variable}" />
+                        </xsl:when>
+
+                        <xsl:when test="@source_type = 'video' ">
+                            <video controls="controls">
+                                <source src="{$source_variable}" type="{$mime_type_variable}" />
+                            </video>
+                        </xsl:when>
+
+                        <xsl:otherwise>
+                            <video controls="controls">
+                                <source src="{$source_variable}" type="{$mime_type_variable}" />
+                                <img src="{$source_variable}" />
+                            </video>
+                        </xsl:otherwise>
+                    </xsl:choose>
+
+                </div>
+            </xsl:if>
+        </xsl:if>
+
+    </xsl:template>
+
     <xsl:template match="comments">
 
-
         <div class="w3-margin-top w3-container w3-blue">
+
+            <!-- Image or Video -->
+            <xsl:apply-templates select="picture_video"/>
 
             <div class="w3-container" >
 
@@ -115,6 +141,9 @@
     <xsl:template match="replies">
 
         <div class="w3-margin-top w3-container w3-blue">
+
+            <!-- Image or Video -->
+            <xsl:apply-templates select="picture_video"/>
 
             <div class="w3-container" >
                 <!-- template for from -->
