@@ -21,10 +21,8 @@
             </header>
             <table class="w3-container" align="center">
                 <tr>
-                    <td>
-                        <h4>António Lima</h4>
-                    </td>
-                    <td>aclspam@hotmail.com</td>
+                    <td><b>António Lima</b></td>
+                    <td>tkd.newsletter@gmail.com</td>
                     <td><a href="https://pt.linkedin.com/in/antónio-lima-2542908a" target="_blank">LinkedIn</a></td>
                     <td><a href="https://github.com/aclima93/Facebook-Group-Newsletter" target="_blank">Code Repository</a></td>
                 </tr>

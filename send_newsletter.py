@@ -2,20 +2,27 @@ import sys
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.header import Header
 
 def send_email(sender_data, receivers, message):
 
     sender, password = sender_data
 
-    smtp_host = 'smtp.live.com'        # microsoft
-    #smtp_host = 'smtp.gmail.com'       # google
-    #smtp_host = 'smtp.mail.yahoo.com'  # yahoo
+    if "gmail" not in sender:
+        print("Error: Only gmail senders are supported by this script.")
+        return
+
+    smtp_host = 'smtp.gmail.com'       # google
+
+    to = [sender]
+    cc = [sender]
+    bcc = receivers
 
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "Taekwondo Newsletter"
-    msg['From'] = sender
-    msg['To'] = ", ".join(receivers)
+    msg.add_header('Subject', 'Taekwondo Newsletter')
+    msg.add_header('From', sender)
+    msg.add_header('To', ','.join(to))
+    msg.add_header('Cc', ','.join(cc))
+    msg.add_header('Bcc', ','.join(bcc))
     msg.attach( MIMEText(message, 'html') )
 
     smtp_obj = smtplib.SMTP(smtp_host, 587, timeout=10)
@@ -23,7 +30,7 @@ def send_email(sender_data, receivers, message):
     try:
         smtp_obj.starttls()
         smtp_obj.login(sender, password)
-        smtp_obj.sendmail(sender, receivers, msg.as_string())
+        smtp_obj.sendmail(sender, to + cc + bcc, msg.as_string())
 
         print("Successfully sent email")
 
