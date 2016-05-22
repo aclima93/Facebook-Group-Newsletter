@@ -2,37 +2,15 @@ import sys  # for command line arguments
 import urllib2  # for HTTP GET request
 import json  # for parsing retrieved data
 import time  # for current time
-import HeadRequest as hr
 from xml.sax.saxutils import escape
 
 def file2string(filepath):
     with open(filepath, 'r') as file:
         return file.read().replace('\n', '')
 
-def get_picture_or_video(id):
-    # get picture and video for this id
-    url = "https://graph.facebook.com/v2.6/" + id + "?fields=source&access_token=" + ACCESS_TOKEN
-    picture_video_dict = json.loads(urllib2.urlopen(url).read())  # read content from url and load it as JSON
-
-    if "source" in picture_video_dict:
-
-        picture_video_dict["source"] = escape(picture_video_dict["source"]) # escape the characters in the URL for XML later on
-
-        mime_type = hr.get_type(picture_video_dict["source"])
-        if mime_type is not None:
-
-            picture_video_dict["mime_type"] = mime_type
-            if "image" in mime_type:
-                picture_video_dict["source_type"] = "image"
-            elif "video" in mime_type:
-                picture_video_dict["source_type"] = "video"
-
-    return picture_video_dict
-
-
-def get_comments_and_replies(id):
+def get_comments_and_replies(element_id):
     # get comments for this id
-    comments_url = "https://graph.facebook.com/v2.6/" + id + "/comments?access_token=" + ACCESS_TOKEN
+    comments_url = "https://graph.facebook.com/v2.6/" + element_id + "/comments?access_token=" + ACCESS_TOKEN
     comments_dict = json.loads(urllib2.urlopen(comments_url).read())
 
     # get replies for each comment
@@ -44,10 +22,29 @@ def get_comments_and_replies(id):
 
     return comments_dict["data"]
 
+def get_author(element_id):
+    # get author for this id
+    author_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=from&access_token=" + ACCESS_TOKEN
+    return json.loads(urllib2.urlopen(author_url).read())
+
+def get_link_and_preview(element_id):
+    # get author for this id
+    link_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=link,full_picture&access_token=" + ACCESS_TOKEN
+    link_dict = json.loads(urllib2.urlopen(link_url).read())
+    escaped_dict = {}
+    for key, value in link_dict.items():
+        escaped_dict[key] = escape(value)  # escape the characters in the URL for XML later on
+    return escaped_dict
+
 def get_additional_data(dic):
 
     for element in dic:
         if "id" in element:
+
+            # get the author (it's not sent for unknown reasons)
+            author = get_author(element["id"])
+            for key, values in author.items():
+                element[key] = values
 
             # get comments
             comments = get_comments_and_replies(element["id"])
@@ -55,9 +52,9 @@ def get_additional_data(dic):
                 element["comments"] = comments
 
             # get pictures and videos
-            picture_video = get_picture_or_video(element["id"])
+            picture_video = get_link_and_preview(element["id"])
             if bool(picture_video):  # empty dictionaries evaluate to false
-                if "source" in picture_video:  # don't add it if a source is not available (meaning no actual data)
+                if "link" in picture_video:
                     element["picture_video"] = picture_video
 
     return dic
@@ -73,11 +70,11 @@ if __name__ == "__main__":
     num_seconds = 7 * 24 * 60 * 60  # a week in seconds = 604800
     a_week_ago_time = round(cur_time - num_seconds)
 
-    url = "https://graph.facebook.com/v2.6/" + GROUP_ID + "/feed?date_format=U&since=" + str(a_week_ago_time) + \
-          "&until=" + str(cur_time) + "&access_token=" + ACCESS_TOKEN
+    feed_url = "https://graph.facebook.com/v2.6/" + GROUP_ID + "/feed?date_format=U&since=" + str(a_week_ago_time) + \
+               "&until=" + str(cur_time) + "&access_token=" + ACCESS_TOKEN
 
-    feed = json.loads(urllib2.urlopen(url).read())
-    feed_data = get_additional_data(feed["data"])
+    feed_dict = json.loads(urllib2.urlopen(feed_url).read())
+    feed_data = get_additional_data(feed_dict["data"])
 
     with open('feed.json', 'w') as outfile:
         json.dump(feed_data, outfile)

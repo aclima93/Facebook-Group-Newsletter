@@ -17,6 +17,8 @@
                 <!-- Header -->
                 <xsl:call-template name="header"/>
 
+                <hr/>
+
                 <xsl:choose>
                     <xsl:when test="objects/stories">
                         <!-- Story Data -->
@@ -38,18 +40,36 @@
     <xsl:template match="stories">
 
         <!-- Story -->
-        <div class="w3-container w3-blue w3-margin-bottom">
-            <h2> <xsl:value-of select="@story"/> </h2>
+        <div class="w3-container w3-black w3-margin-bottom">
 
-            <!-- Message -->
+            <!-- Header of the story -->
+            <h2>
+                <xsl:choose>
+                    <xsl:when test="@story">
+                        <xsl:value-of select="@story"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <div>
+                            <!-- template for from -->
+                            <xsl:apply-templates select="from"/>
+                            <br/>
+                            <xsl:value-of select="@created_time"/>
+                        </div>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </h2>
+
             <div class="w3-container w3-row-padding w3-margin-left w3-white">
-                <xsl:value-of select="@message"/>
+
 
                 <!-- Image or Video -->
                 <xsl:apply-templates select="picture_video"/>
 
+                <!-- Message -->
+                <xsl:value-of select="@message"/>
+
                 <xsl:if test="comments">
-                    <div class="w3-margin-top w3-container w3-indigo">
+                    <div class="w3-margin-top w3-container w3-blue">
                         <h4>Comentários</h4>
 
                         <!-- template for comments -->
@@ -67,45 +87,34 @@
 
     <xsl:template match="picture_video">
 
-        <xsl:if test="@source">
-            <xsl:variable name="source_variable"><xsl:value-of select="@source"/></xsl:variable>
-            <xsl:variable name="mime_type_variable"><xsl:value-of select="@mime_type"/></xsl:variable>
-            <xsl:if test="@mime_type">
-                <div align="center">
+        <div align="center">
+            <!-- link and accompanying image -->
+            <xsl:variable name="link_variable"><xsl:value-of select="@link"/></xsl:variable>
+            <a href="{$link_variable}" target="_blank">
+                <xsl:choose>
+                    <xsl:when test="@full_picture">
+                        <xsl:variable name="picture_variable"><xsl:value-of select="@full_picture"/></xsl:variable>
+                        <img src="{$picture_variable}"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@link"/>
+                    </xsl:otherwise>
+                </xsl:choose>
 
-                    <xsl:choose>
-                        <xsl:when test="@source_type = 'image' ">
-                            <img src="{$source_variable}" />
-                        </xsl:when>
+            </a>
 
-                        <xsl:when test="@source_type = 'video' ">
-                            <video controls="controls">
-                                <source src="{$source_variable}" type="{$mime_type_variable}" />
-                            </video>
-                        </xsl:when>
-
-                        <xsl:otherwise>
-                            <video controls="controls">
-                                <source src="{$source_variable}" type="{$mime_type_variable}" />
-                                <img src="{$source_variable}" />
-                            </video>
-                        </xsl:otherwise>
-                    </xsl:choose>
-
-                </div>
-            </xsl:if>
-        </xsl:if>
+        </div>
 
     </xsl:template>
 
     <xsl:template match="comments">
 
-        <div class="w3-margin-top w3-container w3-blue">
+        <div class="w3-margin-top w3-container w3-black">
 
             <!-- Image or Video -->
             <xsl:apply-templates select="picture_video"/>
 
-            <div class="w3-container" >
+            <div >
 
                 <!-- template for from -->
                 <xsl:apply-templates select="from"/>
@@ -118,7 +127,7 @@
                 <xsl:value-of select="@message"/>
 
                 <xsl:if test="replies">
-                    <div class="w3-margin-bottom w3-container w3-margin-left w3-indigo">
+                    <div class="w3-margin-bottom w3-container w3-margin-left w3-blue">
                         <!-- template for replies -->
                         <h4>Respostas ao comentário</h4>
 
@@ -140,17 +149,16 @@
 
     <xsl:template match="replies">
 
-        <div class="w3-margin-top w3-container w3-blue">
+        <div class="w3-margin-top w3-container w3-black">
 
             <!-- Image or Video -->
             <xsl:apply-templates select="picture_video"/>
 
-            <div class="w3-container" >
+            <div >
                 <!-- template for from -->
                 <xsl:apply-templates select="from"/>
                 <br/>
                 <xsl:value-of select="@created_time"/>
-
             </div>
 
             <div class="w3-margin-top w3-container w3-white">
