@@ -57,7 +57,8 @@ def get_additional_data(dic):
             # get pictures and videos
             picture_video = get_picture_or_video(element["id"])
             if bool(picture_video):  # empty dictionaries evaluate to false
-                element["picture_video"] = picture_video
+                if "source" in picture_video:  # don't add it if a source is not available (meaning no actual data)
+                    element["picture_video"] = picture_video
 
     return dic
 

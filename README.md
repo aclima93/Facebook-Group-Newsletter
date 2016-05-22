@@ -2,11 +2,8 @@
 
 ##Necessary files and contents
 
-### app\_id.txt, group\_id.txt & profile\_id.txt
-These files simply contain a unique id number.
-
-### app\_secret.txt
-Contains the app's secret.
+### group\_id.txt
+Contains a unique id number representative of the targeted facebook group.
 
 ### sender.txt
 Contains the sender's email and password:
