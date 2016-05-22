@@ -52,10 +52,10 @@ def get_additional_data(dic):
                 element["comments"] = comments
 
             # get pictures and videos
-            picture_video = get_link_and_preview(element["id"])
-            if bool(picture_video):  # empty dictionaries evaluate to false
-                if "link" in picture_video:
-                    element["picture_video"] = picture_video
+            attatchment = get_link_and_preview(element["id"])
+            if bool(attatchment):  # empty dictionaries evaluate to false
+                if "link" in attatchment:
+                    element["attatchment"] = attatchment
 
     return dic
 
@@ -77,6 +77,6 @@ if __name__ == "__main__":
     feed_data = get_additional_data(feed_dict["data"])
 
     with open('feed.json', 'w') as outfile:
-        json.dump(feed_data, outfile)
+        json.dump(feed_data, outfile, sort_keys=True, indent=4, separators=(',', ': '))
 
     print("Finished fetching posts.")

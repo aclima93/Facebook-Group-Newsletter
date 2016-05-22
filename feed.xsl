@@ -40,7 +40,7 @@
     <xsl:template match="stories">
 
         <!-- Story -->
-        <div class="w3-container w3-black w3-margin-bottom">
+        <div class="w3-container w3-black w3-margin-bottom" align="center">
 
             <!-- Header of the story -->
             <h2>
@@ -59,7 +59,7 @@
                 </xsl:choose>
             </h2>
 
-            <div class="w3-container w3-row-padding w3-margin-left w3-white">
+            <div class="w3-container w3-white">
 
 
                 <!-- Image or Video -->
@@ -81,13 +81,12 @@
             </div>
         </div>
 
-        <hr/>
+        <hr style="border: 1px solid #000" />
 
     </xsl:template>
 
     <xsl:template match="picture_video">
 
-        <div align="center">
             <!-- link and accompanying image -->
             <xsl:variable name="link_variable"><xsl:value-of select="@link"/></xsl:variable>
             <a href="{$link_variable}" target="_blank">
@@ -103,8 +102,6 @@
 
             </a>
 
-        </div>
-
     </xsl:template>
 
     <xsl:template match="comments">
@@ -112,16 +109,26 @@
         <div class="w3-margin-top w3-container w3-black">
 
             <!-- Image or Video -->
-            <xsl:apply-templates select="picture_video"/>
+            <xsl:apply-templates select="attatchment"/>
 
-            <div >
-
+            <table>
                 <!-- template for from -->
-                <xsl:apply-templates select="from"/>
-                <br/>
-                <xsl:value-of select="@created_time"/>
-
-            </div>
+                <tr>
+                    <td>
+                        <xsl:apply-templates select="from"/>
+                    </td>
+                    <xsl:if test="@created_time">
+                        <td>
+                            Criado: <xsl:value-of select="@created_time"/>
+                        </td>
+                    </xsl:if>
+                    <xsl:if test="@created_time">
+                        <td>
+                            Actualizado: <xsl:value-of select="@updated_time"/>
+                        </td>
+                    </xsl:if>
+                </tr>
+            </table>
 
             <div class="w3-margin-top w3-container w3-white">
                 <xsl:value-of select="@message"/>
@@ -129,7 +136,7 @@
                 <xsl:if test="replies">
                     <div class="w3-margin-bottom w3-container w3-margin-left w3-blue">
                         <!-- template for replies -->
-                        <h4>Respostas ao comentário</h4>
+                        <h4>Respostas</h4>
 
                         <xsl:apply-templates select="replies"/>
                     </div>
@@ -152,7 +159,7 @@
         <div class="w3-margin-top w3-container w3-black">
 
             <!-- Image or Video -->
-            <xsl:apply-templates select="picture_video"/>
+            <xsl:apply-templates select="attatchment"/>
 
             <div >
                 <!-- template for from -->
