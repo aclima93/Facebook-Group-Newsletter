@@ -3,6 +3,8 @@ import urllib2  # for HTTP GET request
 import json  # for parsing retrieved data
 import time  # for current time
 from xml.sax.saxutils import escape
+from datetime import datetime
+import pytz
 
 def file2string(filepath):
     with open(filepath, 'r') as file:
@@ -13,6 +15,10 @@ def get_comments_and_replies(element_id):
     comments_url = "https://graph.facebook.com/v2.6/" + element_id + "/comments?access_token=" + ACCESS_TOKEN
     comments_dict = json.loads(urllib2.urlopen(comments_url).read())
 
+    # update and creation time
+    for key, value in get_creation_and_update_time(element_id).items():
+        comments_dict[key] = value
+
     # get replies for each comment
     for reply in comments_dict["data"]:
         if "id" in reply:
@@ -22,42 +28,79 @@ def get_comments_and_replies(element_id):
 
     return comments_dict["data"]
 
+def unix_time_to_datetime_str(unix_timestamp_str):
+    return datetime.fromtimestamp(int(unix_timestamp_str), pytz.timezone('US/Pacific')).strftime("%d-%m-%Y %H:%M")
+
+def get_creation_and_update_time(element_id):
+    # get author for this id
+    times_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=created_time&date_format=U&access_token=" + ACCESS_TOKEN
+    times_dict = json.loads(urllib2.urlopen(times_url).read())
+
+    # convert time to human-readable format
+    if "created_time" in times_dict:
+        times_dict["created_time"] = unix_time_to_datetime_str( times_dict["created_time"] )
+
+    return times_dict
+
 def get_author(element_id):
     # get author for this id
     author_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=from&access_token=" + ACCESS_TOKEN
-    return json.loads(urllib2.urlopen(author_url).read())
+    author_dict = json.loads(urllib2.urlopen(author_url).read())
+
+    # get the author's picture
+    if "from" in author_dict:
+        if "id" in author_dict["from"]:
+            picture_url = get_author_picture(author_dict["from"]["id"])
+            if bool(picture_url):
+                author_dict["from"]["picture"] = picture_url
+
+    return author_dict
+
+def get_author_picture(author_id):
+    # get author picture for this id
+    author_picture_url = "https://graph.facebook.com/v2.6/" + author_id + "?fields=picture&access_token=" + ACCESS_TOKEN
+    author_picture_dict = json.loads(urllib2.urlopen(author_picture_url).read())
+
+    if "picture" in author_picture_dict:
+        if "data" in author_picture_dict["picture"]:
+            return escape(author_picture_dict["picture"]["data"]["url"])
+    return None
 
 def get_link_and_preview(element_id):
     # get author for this id
     link_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=link,full_picture&access_token=" + ACCESS_TOKEN
     link_dict = json.loads(urllib2.urlopen(link_url).read())
+
     escaped_dict = {}
     for key, value in link_dict.items():
         escaped_dict[key] = escape(value)  # escape the characters in the URL for XML later on
     return escaped_dict
 
-def get_additional_data(dic):
+def get_additional_data(feed):
 
-    for element in dic:
-        if "id" in element:
+    for story in feed:
+        if "id" in story:
 
             # get the author (it's not sent for unknown reasons)
-            author = get_author(element["id"])
-            for key, values in author.items():
-                element[key] = values
+            for key, values in get_author(story["id"]).items():
+                story[key] = values
+
+            # update and creation time
+            for key, value in get_creation_and_update_time(story["id"]).items():
+                story[key] = value
 
             # get comments
-            comments = get_comments_and_replies(element["id"])
+            comments = get_comments_and_replies(story["id"])
             if bool(comments):  # empty dictionaries evaluate to false
-                element["comments"] = comments
+                story["comments"] = comments
 
             # get pictures and videos
-            attatchment = get_link_and_preview(element["id"])
+            attatchment = get_link_and_preview(story["id"])
             if bool(attatchment):  # empty dictionaries evaluate to false
                 if "link" in attatchment:
-                    element["attatchment"] = attatchment
+                    story["attatchment"] = attatchment
 
-    return dic
+    return feed
 
 if __name__ == "__main__":
     print("Fetching posts...")

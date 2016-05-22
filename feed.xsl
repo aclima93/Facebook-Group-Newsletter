@@ -63,7 +63,7 @@
 
 
                 <!-- Image or Video -->
-                <xsl:apply-templates select="picture_video"/>
+                <xsl:apply-templates select="attatchment"/>
 
                 <!-- Message -->
                 <xsl:value-of select="@message"/>
@@ -85,22 +85,21 @@
 
     </xsl:template>
 
-    <xsl:template match="picture_video">
+    <xsl:template match="attatchment">
 
-            <!-- link and accompanying image -->
-            <xsl:variable name="link_variable"><xsl:value-of select="@link"/></xsl:variable>
-            <a href="{$link_variable}" target="_blank">
-                <xsl:choose>
-                    <xsl:when test="@full_picture">
-                        <xsl:variable name="picture_variable"><xsl:value-of select="@full_picture"/></xsl:variable>
-                        <img src="{$picture_variable}"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@link"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-
-            </a>
+        <!-- link and accompanying image -->
+        <xsl:variable name="link_variable"><xsl:value-of select="@link"/></xsl:variable>
+        <a href="{$link_variable}" target="_blank">
+            <xsl:choose>
+                <xsl:when test="@full_picture">
+                    <xsl:variable name="picture_variable"><xsl:value-of select="@full_picture"/></xsl:variable>
+                    <img src="{$picture_variable}"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@link"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </a>
 
     </xsl:template>
 
@@ -120,11 +119,6 @@
                     <xsl:if test="@created_time">
                         <td>
                             Criado: <xsl:value-of select="@created_time"/>
-                        </td>
-                    </xsl:if>
-                    <xsl:if test="@created_time">
-                        <td>
-                            Actualizado: <xsl:value-of select="@updated_time"/>
                         </td>
                     </xsl:if>
                 </tr>
@@ -149,8 +143,19 @@
 
     <xsl:template match="from">
 
+        <!-- name and accompanying image, with links -->
         <xsl:variable name="person_hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
-        <a href="{$person_hyperlink}" target="_blank"> <xsl:value-of select="@name"/></a>
+        <xsl:if test="@picture">
+            <tr>
+                <a href="{$person_hyperlink}" target="_blank">
+                    <xsl:variable name="picture_variable"><xsl:value-of select="@picture"/></xsl:variable>
+                    <img src="{$picture_variable}"/>
+                </a>
+            </tr>
+        </xsl:if>
+        <tr>
+            <a href="{$person_hyperlink}" target="_blank"> <xsl:value-of select="@name"/></a>
+        </tr>
 
     </xsl:template>
 
