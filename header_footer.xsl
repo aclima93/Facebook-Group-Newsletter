@@ -4,8 +4,9 @@
     <xsl:template name="header">
 
         <!-- Header Information -->
-        <div>
+        <div align="center">
             <header class="w3-container w3-black">
+                <img src="header_img.png"/>
                 <h2>Taekwondo Newsletter</h2>
             </header>
         </div>
@@ -21,10 +22,10 @@
             </header>
             <table class="w3-container" align="center">
                 <tr>
-                    <td><b>António Lima</b></td>
-                    <td>tkd.newsletter@gmail.com</td>
-                    <td><a href="https://pt.linkedin.com/in/antónio-lima-2542908a" target="_blank">LinkedIn</a></td>
-                    <td><a href="https://github.com/aclima93/Facebook-Group-Newsletter" target="_blank">Code Repository</a></td>
+                    <td align="center"><b>António Lima</b></td>
+                    <td align="center">tkd.newsletter@gmail.com</td>
+                    <td align="center"><a href="https://pt.linkedin.com/in/antónio-lima-2542908a" target="_blank">LinkedIn</a></td>
+                    <td align="center"><a href="https://github.com/aclima93/Facebook-Group-Newsletter" target="_blank">Code Repository</a></td>
                 </tr>
             </table>
         </div>
