@@ -26,6 +26,12 @@ def get_comments_and_replies(element_id):
             if bool(replies):  # check for empty replies
                 reply["replies"] = replies
 
+        if "message" in reply:
+            reply["message"] = escape(reply["message"])
+
+        if "story" in reply:
+            reply["story"] = escape(reply["story"])
+
     return comments_dict["data"]
 
 def unix_time_to_datetime_str(unix_timestamp_str):
@@ -99,6 +105,12 @@ def get_additional_data(feed):
             if bool(attatchment):  # empty dictionaries evaluate to false
                 if "link" in attatchment:
                     story["attatchment"] = attatchment
+
+        if "message" in story:
+            story["message"] = escape(story["message"])
+
+        if "story" in story:
+            story["story"] = escape(story["story"])
 
     return feed
 
