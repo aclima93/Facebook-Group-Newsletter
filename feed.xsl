@@ -20,14 +20,18 @@
                 <hr/>
 
                 <xsl:choose>
-                    <xsl:when test="objects/stories">
+                    <xsl:when test="posts/stories">
                         <!-- Story Data -->
-                        <xsl:apply-templates select="objects/stories"/>
+                        <xsl:apply-templates select="posts/stories"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <p><b>Esta semana não houve actividade no grupo.</b></p>
+                        <font color="white">
+                            <p><b>Esta semana não houve actividade no grupo.</b></p>
+                        </font>
                     </xsl:otherwise>
                 </xsl:choose>
+
+                <hr/>
 
                 <!-- Footer -->
                 <xsl:call-template name="footer"/>
@@ -59,7 +63,9 @@
             </xsl:if>
             <tr>
                 <td align="center">
-                    <a href="{$person_hyperlink}" target="_blank"> <xsl:value-of select="@name"/></a>
+                    <font color="white">
+                        <a href="{$person_hyperlink}" target="_blank"> <xsl:value-of select="@name"/></a>
+                    </font>
                 </td>
             </tr>
         </table>
@@ -98,18 +104,25 @@
             <h2>
 
                 <table>
+                    <col width="20%"/>
+                    <col width="60%"/>
+                    <col width="20%"/>
                     <tr>
                         <td align="center">
                             <!-- template for from -->
                             <xsl:apply-templates select="from"/>
                         </td>
-                        <xsl:if test="@story">
-                            <td align="center">
-                                <xsl:value-of select="@story"/>
-                            </td>
-                        </xsl:if>
                         <td align="center">
-                            <xsl:value-of select="@created_time"/>
+                            <xsl:if test="@story">
+                                <font color="white">
+                                    <xsl:value-of select="@story"/>
+                                </font>
+                            </xsl:if>
+                        </td>
+                        <td align="center">
+                            <font color="white">
+                                <xsl:value-of select="@created_time"/>
+                            </font>
                         </td>
                     </tr>
                 </table>
@@ -122,8 +135,12 @@
                 <!-- Image or Video -->
                 <xsl:apply-templates select="attatchment"/>
 
+                <br/>
+
                 <!-- Message -->
                 <xsl:value-of select="@message"/>
+
+                <br/>
 
                 <xsl:if test="comments">
                     <div class="w3-margin-top w3-container w3-blue" align="left">
@@ -145,73 +162,114 @@
     <!-- comments template -->
     <xsl:template match="comments">
 
-        <div class="w3-container w3-black">
-
-            <!-- Image or Video -->
-            <xsl:apply-templates select="attatchment"/>
-
-
+        <div class="w3-container w3-blue">
             <table>
                 <tr>
-                    <table>
-                        <tr>
-                            <td align="center">
-                                <!-- template for from -->
-                                <xsl:apply-templates select="from"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="center">
-                                <xsl:value-of select="@created_time"/>
-                            </td>
-                        </tr>
-                    </table>
                     <td>
-                        <div class="w3-container w3-white">
-                            <xsl:value-of select="@message"/>
+                        <font color="white">
+                            &#9658;
+                        </font>
+                    </td>
+                    <td>
+                        <div class="w3-container w3-black">
+
+                            <!-- Image or Video -->
+                            <xsl:apply-templates select="attatchment"/>
+
+                            <br/>
+
+                            <table>
+                                <col width="20%"/>
+                                <col width="80%"/>
+                                <tr>
+                                    <table>
+                                        <tr>
+                                            <td align="center">
+                                                <!-- template for from -->
+                                                <xsl:apply-templates select="from"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">
+                                                <font color="white">
+                                                    <xsl:value-of select="@created_time"/>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <td>
+                                        <div class="w3-container w3-white">
+                                            <xsl:value-of select="@message"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <xsl:if test="reply">
+                                <div class="w3-margin-top w3-container w3-margin-left w3-blue" align="left">
+                                    <!-- template for reply -->
+                                    <h4>Respostas</h4>
+                                    <xsl:apply-templates select="reply"/>
+                                </div>
+                            </xsl:if>
+
                         </div>
                     </td>
                 </tr>
             </table>
-
-            <xsl:if test="replies">
-                <div class="w3-margin-top w3-container w3-margin-left w3-blue" align="left">
-                    <!-- template for replies -->
-                    <h4>Respostas</h4>
-                    <xsl:apply-templates select="replies"/>
-                </div>
-            </xsl:if>
-
         </div>
 
     </xsl:template>
 
-    <!-- replies template -->
-    <xsl:template match="replies">
+    <!-- reply template -->
+    <xsl:template match="reply">
 
-        <div class="w3-container w3-black">
-
-            <!-- Image or Video -->
-            <xsl:apply-templates select="attatchment"/>
+        <div class="w3-container w3-blue">
 
             <table>
                 <tr>
-                    <table>
-                        <tr>
-                            <td align="center">
-                                <!-- template for from -->
-                                <xsl:apply-templates select="from"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="center">
-                                <xsl:value-of select="@created_time"/>
-                            </td>
-                        </tr>
-                    </table>
+
                     <td>
-                        <div class="w3-container w3-white">
-                            <xsl:value-of select="@message"/>
+                        <font color="white">
+                            &#9711;
+                        </font>
+                    </td>
+
+                    <td>
+                        <div class="w3-container w3-black">
+
+                            <!-- Image or Video -->
+                            <xsl:apply-templates select="attatchment"/>
+
+                            <br/>
+
+                            <table>
+                                <col width="20%"/>
+                                <col width="80%"/>
+                                <tr>
+                                    <table>
+                                        <tr>
+                                            <td align="center">
+                                                <!-- template for from -->
+                                                <xsl:apply-templates select="from"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center">
+                                                <font color="white">
+                                                    <xsl:value-of select="@created_time"/>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <td>
+                                        <div class="w3-container w3-white">
+                                            <xsl:value-of select="@message"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
                         </div>
                     </td>
                 </tr>

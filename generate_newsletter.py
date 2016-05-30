@@ -10,7 +10,7 @@ def dict2xml(d, root_node=None):
     """
 
     wrap = False if None == root_node or isinstance(d, list) else True
-    root = 'objects' if None == root_node else root_node
+    root = 'posts' if None == root_node else root_node
     root_singular = root[:-1] if 's' == root[-1] and None == root_node else root
     xml_str = ''
     children = []

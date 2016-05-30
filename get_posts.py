@@ -28,9 +28,25 @@ def get_comments_and_replies(element_id):
     # get replies for each comment
     for reply in comments_dict["data"]:
         if "id" in reply:
+
+            # get the author
+            for key, values in get_author(reply["id"]).items():
+                reply[key] = values
+
+            # get comments and replies (recursively)
             replies = get_comments_and_replies(reply["id"])
             if bool(replies):  # check for empty replies
-                reply["replies"] = replies
+                reply["reply"] = replies
+
+            # update and creation time
+            for key, value in get_creation_and_update_time(reply["id"]).items():
+                reply[key] = value
+
+            # get pictures and videos
+            attatchment = get_link_and_preview(reply["id"])
+            if bool(attatchment):  # empty dictionaries evaluate to false
+                if "link" in attatchment:
+                    reply["attatchment"] = attatchment
 
         if "message" in reply:
             reply["message"] = escape(reply["message"])
