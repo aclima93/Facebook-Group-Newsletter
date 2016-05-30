@@ -48,27 +48,29 @@
     <!-- from template -->
     <xsl:template match="from">
 
-        <table>
-            <!-- name and accompanying image, with links -->
-            <xsl:variable name="person_hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
-            <xsl:if test="@picture">
+        <div>
+            <table>
+                <!-- name and accompanying image, with links -->
+                <xsl:variable name="person_hyperlink">https://www.facebook.com/<xsl:value-of select="@id"/></xsl:variable>
+                <xsl:if test="@picture">
+                    <tr>
+                        <td align="center">
+                            <a href="{$person_hyperlink}" target="_blank">
+                                <xsl:variable name="picture_variable"><xsl:value-of select="@picture"/></xsl:variable>
+                                <img src="{$picture_variable}"/>
+                            </a>
+                        </td>
+                    </tr>
+                </xsl:if>
                 <tr>
                     <td align="center">
-                        <a href="{$person_hyperlink}" target="_blank">
-                            <xsl:variable name="picture_variable"><xsl:value-of select="@picture"/></xsl:variable>
-                            <img src="{$picture_variable}"/>
-                        </a>
+                        <font color="white">
+                            <a href="{$person_hyperlink}" target="_blank"> <xsl:value-of select="@name"/></a>
+                        </font>
                     </td>
                 </tr>
-            </xsl:if>
-            <tr>
-                <td align="center">
-                    <font color="white">
-                        <a href="{$person_hyperlink}" target="_blank"> <xsl:value-of select="@name"/></a>
-                    </font>
-                </td>
-            </tr>
-        </table>
+            </table>
+        </div>
 
     </xsl:template>
 
@@ -103,29 +105,31 @@
             <!-- Header of the story -->
             <h2>
 
-                <table>
-                    <col width="20%"/>
-                    <col width="60%"/>
-                    <col width="20%"/>
-                    <tr>
-                        <td align="center">
-                            <!-- template for from -->
-                            <xsl:apply-templates select="from"/>
-                        </td>
-                        <td align="center">
-                            <xsl:if test="@story">
+                <div>
+                    <table>
+                        <col width="20%"/>
+                        <col width="60%"/>
+                        <col width="20%"/>
+                        <tr>
+                            <td align="center">
+                                <!-- template for from -->
+                                <xsl:apply-templates select="from"/>
+                            </td>
+                            <td align="center">
+                                <xsl:if test="@story">
+                                    <font color="white">
+                                        <xsl:value-of select="@story"/>
+                                    </font>
+                                </xsl:if>
+                            </td>
+                            <td align="center">
                                 <font color="white">
-                                    <xsl:value-of select="@story"/>
+                                    <xsl:value-of select="@created_time"/>
                                 </font>
-                            </xsl:if>
-                        </td>
-                        <td align="center">
-                            <font color="white">
-                                <xsl:value-of select="@created_time"/>
-                            </font>
-                        </td>
-                    </tr>
-                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
             </h2>
 
@@ -178,32 +182,34 @@
 
                             <br/>
 
-                            <table>
-                                <col width="20%"/>
-                                <col width="80%"/>
-                                <tr>
-                                    <table>
-                                        <tr>
-                                            <td align="center">
-                                                <!-- template for from -->
-                                                <xsl:apply-templates select="from"/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="center">
-                                                <font color="white">
-                                                    <xsl:value-of select="@created_time"/>
-                                                </font>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <td>
-                                        <div class="w3-container w3-white">
-                                            <xsl:value-of select="@message"/>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
+                            <div>
+                                <table>
+                                    <col width="20%"/>
+                                    <col width="80%"/>
+                                    <tr>
+                                        <table>
+                                            <tr>
+                                                <td align="center">
+                                                    <!-- template for from -->
+                                                    <xsl:apply-templates select="from"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center">
+                                                    <font color="white">
+                                                        <xsl:value-of select="@created_time"/>
+                                                    </font>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <td>
+                                            <div class="w3-container w3-white">
+                                                <xsl:value-of select="@message"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
 
                             <xsl:if test="reply">
                                 <div class="w3-margin-top w3-container w3-margin-left w3-blue" align="left">
@@ -227,6 +233,8 @@
         <div class="w3-container w3-blue">
 
             <table>
+                <col width="5%"/>
+                <col width="95%"/>
                 <tr>
 
                     <td>
@@ -243,32 +251,39 @@
 
                             <br/>
 
-                            <table>
-                                <col width="20%"/>
-                                <col width="80%"/>
-                                <tr>
-                                    <table>
-                                        <tr>
-                                            <td align="center">
-                                                <!-- template for from -->
-                                                <xsl:apply-templates select="from"/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="center">
-                                                <font color="white">
-                                                    <xsl:value-of select="@created_time"/>
-                                                </font>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <td>
-                                        <div class="w3-container w3-white">
-                                            <xsl:value-of select="@message"/>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
+                            <div>
+                                <table>
+                                    <col width="20%"/>
+                                    <col width="80%"/>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <table>
+                                                    <tr>
+                                                        <td align="center">
+                                                            <!-- template for from -->
+                                                            <xsl:apply-templates select="from"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center">
+                                                            <font color="white">
+                                                                <xsl:value-of select="@created_time"/>
+                                                            </font>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <div class="w3-container w3-white">
+                                                <xsl:value-of select="@message"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
 
                         </div>
                     </td>
