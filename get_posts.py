@@ -36,7 +36,7 @@ def get_comments_and_replies(element_id):
             # get comments and replies (recursively)
             replies = get_comments_and_replies(reply["id"])
             if bool(replies):  # check for empty replies
-                reply["reply"] = replies
+                reply["comments"] = replies
 
             # update and creation time
             for key, value in get_creation_and_update_time(reply["id"]).items():

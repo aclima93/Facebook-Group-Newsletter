@@ -167,70 +167,6 @@
     <xsl:template match="comments">
 
         <div class="w3-container w3-blue">
-            <table>
-                <tr>
-                    <td>
-                        <font color="white">
-                            &#9658;
-                        </font>
-                    </td>
-                    <td>
-                        <div class="w3-container w3-black">
-
-                            <!-- Image or Video -->
-                            <xsl:apply-templates select="attatchment"/>
-
-                            <br/>
-
-                            <div>
-                                <table>
-                                    <col width="20%"/>
-                                    <col width="80%"/>
-                                    <tr>
-                                        <table>
-                                            <tr>
-                                                <td align="center">
-                                                    <!-- template for from -->
-                                                    <xsl:apply-templates select="from"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center">
-                                                    <font color="white">
-                                                        <xsl:value-of select="@created_time"/>
-                                                    </font>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <td>
-                                            <font color="white">
-                                                <xsl:value-of select="@message"/>
-                                            </font>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <xsl:if test="reply">
-                                <div class="w3-margin-top w3-container w3-margin-left w3-blue" align="left">
-                                    <!-- template for reply -->
-                                    <h4>Respostas</h4>
-                                    <xsl:apply-templates select="reply"/>
-                                </div>
-                            </xsl:if>
-
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-    </xsl:template>
-
-    <!-- reply template -->
-    <xsl:template match="reply">
-
-        <div class="w3-container w3-blue">
 
             <table>
                 <col width="5%"/>
@@ -239,7 +175,7 @@
 
                     <td>
                         <font color="white">
-                            &#9711;
+                            &#9658;
                         </font>
                     </td>
 
@@ -289,6 +225,16 @@
                     </td>
                 </tr>
             </table>
+
+            <xsl:if test="comments">
+                <div class="w3-margin-top w3-margin-left w3-container w3-blue" align="left">
+                    <h4>Respostas ao comentário</h4>
+
+                    <!-- template for comments -->
+                    <xsl:apply-templates select="comments"/>
+
+                </div>
+            </xsl:if>
 
         </div>
 
