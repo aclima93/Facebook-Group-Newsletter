@@ -17,6 +17,12 @@ def read_url_as_dict(url):
     except urllib2.HTTPError:
         return {}
 
+def get_likes(element_id):
+    # get likes for this id
+    likes_url = "https://graph.facebook.com/v2.6/" + element_id + "/likes?access_token=" + ACCESS_TOKEN
+    likes_dict = read_url_as_dict(likes_url)
+    return len(likes_dict["data"])
+
 def get_comments_and_replies(element_id):
     # get comments for this id
     comments_url = "https://graph.facebook.com/v2.6/" + element_id + "/comments?access_token=" + ACCESS_TOKEN
@@ -48,6 +54,10 @@ def get_comments_and_replies(element_id):
             if bool(attatchment):  # empty dictionaries evaluate to false
                 if "link" in attatchment:
                     comment["attatchment"] = attatchment
+
+            likes = get_likes(comment["id"])
+            if likes != 0:
+                comment["likes"] = likes
 
         if "message" in comment:
             comment["message"] = escape(comment["message"])
@@ -128,6 +138,10 @@ def get_additional_data(feed):
             if bool(attatchment):  # empty dictionaries evaluate to false
                 if "link" in attatchment:
                     story["attatchment"] = attatchment
+
+            likes = get_likes(story["id"])
+            if likes != 0:
+                story["likes"] = likes
 
         if "message" in story:
             story["message"] = escape(story["message"])

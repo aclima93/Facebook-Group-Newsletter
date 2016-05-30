@@ -213,9 +213,23 @@
 
                                         </td>
                                         <td>
-                                            <font color="white">
-                                                <xsl:value-of select="@message"/>
-                                            </font>
+                                            <div>
+                                                <table>
+                                                    <tr>
+                                                        <font color="white">
+                                                            <xsl:value-of select="@message"/>
+                                                        </font>
+                                                    </tr>
+                                                    <xsl:if test="@likes">
+                                                        <hr/>
+                                                        <tr>
+                                                            <font color="white">
+                                                                <xsl:value-of select="@likes"/>&#160;Likes
+                                                            </font>
+                                                        </tr>
+                                                    </xsl:if>
+                                                </table>
+                                            </div>
                                         </td>
                                     </tr>
                                 </table>
