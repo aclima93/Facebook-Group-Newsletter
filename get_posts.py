@@ -5,6 +5,7 @@ import time  # for current time
 from xml.sax.saxutils import escape
 from datetime import datetime
 import pytz
+import tzlocal
 
 def file2string(filepath):
     with open(filepath, 'r') as file:
@@ -26,38 +27,38 @@ def get_comments_and_replies(element_id):
         comments_dict[key] = value
 
     # get replies for each comment
-    for reply in comments_dict["data"]:
-        if "id" in reply:
+    for comment in comments_dict["data"]:
+        if "id" in comment:
 
             # get the author
-            for key, values in get_author(reply["id"]).items():
-                reply[key] = values
+            for key, values in get_author(comment["id"]).items():
+                comment[key] = values
 
             # get comments and replies (recursively)
-            replies = get_comments_and_replies(reply["id"])
+            replies = get_comments_and_replies(comment["id"])
             if bool(replies):  # check for empty replies
-                reply["comments"] = replies
+                comment["comments"] = replies
 
             # update and creation time
-            for key, value in get_creation_and_update_time(reply["id"]).items():
-                reply[key] = value
+            for key, value in get_creation_and_update_time(comment["id"]).items():
+                comment[key] = value
 
             # get pictures and videos
-            attatchment = get_link_and_preview(reply["id"])
+            attatchment = get_link_and_preview(comment["id"])
             if bool(attatchment):  # empty dictionaries evaluate to false
                 if "link" in attatchment:
-                    reply["attatchment"] = attatchment
+                    comment["attatchment"] = attatchment
 
-        if "message" in reply:
-            reply["message"] = escape(reply["message"])
+        if "message" in comment:
+            comment["message"] = escape(comment["message"])
 
-        if "story" in reply:
-            reply["story"] = escape(reply["story"])
+        if "story" in comment:
+            comment["story"] = escape(comment["story"])
 
     return comments_dict["data"]
 
 def unix_time_to_datetime_str(unix_timestamp_str):
-    return datetime.fromtimestamp(int(unix_timestamp_str), pytz.timezone('US/Pacific')).strftime("%H:%M %d/%m/%Y")
+    return datetime.fromtimestamp(int(unix_timestamp_str), tzlocal.get_localzone()).strftime("%H:%M %d/%m/%Y")
 
 def get_creation_and_update_time(element_id):
     # get author for this id
