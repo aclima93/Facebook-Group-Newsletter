@@ -10,10 +10,16 @@ def file2string(filepath):
     with open(filepath, 'r') as file:
         return file.read().replace('\n', '')
 
+def read_url_as_dict(url):
+    try:
+        return json.loads(urllib2.urlopen(url).read())
+    except urllib2.HTTPError:
+        return {}
+
 def get_comments_and_replies(element_id):
     # get comments for this id
     comments_url = "https://graph.facebook.com/v2.6/" + element_id + "/comments?access_token=" + ACCESS_TOKEN
-    comments_dict = json.loads(urllib2.urlopen(comments_url).read())
+    comments_dict = read_url_as_dict(comments_url)
 
     # update and creation time
     for key, value in get_creation_and_update_time(element_id).items():
@@ -35,12 +41,12 @@ def get_comments_and_replies(element_id):
     return comments_dict["data"]
 
 def unix_time_to_datetime_str(unix_timestamp_str):
-    return datetime.fromtimestamp(int(unix_timestamp_str), pytz.timezone('US/Pacific')).strftime("%d-%m-%Y %H:%M")
+    return datetime.fromtimestamp(int(unix_timestamp_str), pytz.timezone('US/Pacific')).strftime("%H:%M %d/%m/%Y")
 
 def get_creation_and_update_time(element_id):
     # get author for this id
     times_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=created_time&date_format=U&access_token=" + ACCESS_TOKEN
-    times_dict = json.loads(urllib2.urlopen(times_url).read())
+    times_dict = read_url_as_dict(times_url)
 
     # convert time to human-readable format
     if "created_time" in times_dict:
@@ -51,7 +57,7 @@ def get_creation_and_update_time(element_id):
 def get_author(element_id):
     # get author for this id
     author_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=from&access_token=" + ACCESS_TOKEN
-    author_dict = json.loads(urllib2.urlopen(author_url).read())
+    author_dict = read_url_as_dict(author_url)
 
     # get the author's picture
     if "from" in author_dict:
@@ -65,7 +71,7 @@ def get_author(element_id):
 def get_author_picture(author_id):
     # get author picture for this id
     author_picture_url = "https://graph.facebook.com/v2.6/" + author_id + "?fields=picture&access_token=" + ACCESS_TOKEN
-    author_picture_dict = json.loads(urllib2.urlopen(author_picture_url).read())
+    author_picture_dict = read_url_as_dict(author_picture_url)
 
     if "picture" in author_picture_dict:
         if "data" in author_picture_dict["picture"]:
@@ -75,7 +81,7 @@ def get_author_picture(author_id):
 def get_link_and_preview(element_id):
     # get author for this id
     link_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=link,full_picture&access_token=" + ACCESS_TOKEN
-    link_dict = json.loads(urllib2.urlopen(link_url).read())
+    link_dict = read_url_as_dict(link_url)
 
     escaped_dict = {}
     for key, value in link_dict.items():
@@ -128,7 +134,7 @@ if __name__ == "__main__":
     feed_url = "https://graph.facebook.com/v2.6/" + GROUP_ID + "/feed?date_format=U&since=" + str(a_week_ago_time) + \
                "&until=" + str(cur_time) + "&access_token=" + ACCESS_TOKEN
 
-    feed_dict = json.loads(urllib2.urlopen(feed_url).read())
+    feed_dict = read_url_as_dict(feed_url)
     feed_data = get_additional_data(feed_dict["data"])
 
     with open('feed.json', 'w') as outfile:
