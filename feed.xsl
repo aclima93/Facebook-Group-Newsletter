@@ -203,9 +203,9 @@
                                             </tr>
                                         </table>
                                         <td>
-                                            <div class="w3-container w3-white">
+                                            <font color="white">
                                                 <xsl:value-of select="@message"/>
-                                            </div>
+                                            </font>
                                         </td>
                                     </tr>
                                 </table>
@@ -277,9 +277,9 @@
 
                                         </td>
                                         <td>
-                                            <div class="w3-container w3-white">
+                                            <font color="white">
                                                 <xsl:value-of select="@message"/>
-                                            </div>
+                                            </font>
                                         </td>
                                     </tr>
                                 </table>
