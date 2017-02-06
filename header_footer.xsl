@@ -6,7 +6,7 @@
         <!-- Header Information -->
         <div align="center">
             <header class="w3-container w3-black">
-                <img src="header_img.png"/>
+                <img src="https://www.dropbox.com/s/l9goixjrl4sa6y9/header_img.png?dl=0"/>
                 <h2>Taekwondo Newsletter</h2>
             </header>
         </div>

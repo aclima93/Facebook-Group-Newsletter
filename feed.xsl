@@ -224,7 +224,7 @@
                                                         <hr/>
                                                         <tr>
                                                             <font color="white">
-                                                                <xsl:value-of select="@likes"/>&#160;Likes
+                                                                <xsl:value-of select="@likes"/>&#160;<img src="https://www.dropbox.com/s/crwrsvmim5tdqa9/profile_id.txt?dl=0"/>
                                                             </font>
                                                         </tr>
                                                     </xsl:if>
