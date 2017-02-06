@@ -28,14 +28,17 @@ def send_email(sender_data, receivers, message):
     smtp_obj = smtplib.SMTP(smtp_host, 587, timeout=10)
 
     try:
+        smtp_obj.ehlo
         smtp_obj.starttls()
+        smtp_obj.ehlo
         smtp_obj.login(sender, password)
         smtp_obj.sendmail(sender, to + cc + bcc, msg.as_string())
 
         print("Successfully sent email")
 
-    except Exception:
-        print("Error: unable to send email")
+    except Exception as exception:
+        print("Error: unable to send email with exception:")
+        print(str(exception))
 
     finally:
         smtp_obj.quit()
