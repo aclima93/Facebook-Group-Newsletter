@@ -19,13 +19,15 @@ def read_url_as_dict(url):
 
 def get_likes(element_id):
     # get likes for this id
-    likes_url = "https://graph.facebook.com/v2.6/" + element_id + "/likes?access_token=" + ACCESS_TOKEN
+    likes_url = BASE_FB_API_URL + element_id + "/likes?access_token=" + ACCESS_TOKEN
     likes_dict = read_url_as_dict(likes_url)
-    return len(likes_dict["data"])
+    if "data" in likes_dict:
+        return len(likes_dict["data"])
+    return 0
 
 def get_comments_and_replies(element_id):
     # get comments for this id
-    comments_url = "https://graph.facebook.com/v2.6/" + element_id + "/comments?access_token=" + ACCESS_TOKEN
+    comments_url = BASE_FB_API_URL + element_id + "/comments?access_token=" + ACCESS_TOKEN
     comments_dict = read_url_as_dict(comments_url)
 
     # update and creation time
@@ -33,46 +35,48 @@ def get_comments_and_replies(element_id):
         comments_dict[key] = value
 
     # get replies for each comment
-    for comment in comments_dict["data"]:
-        if "id" in comment:
+    if "data" in comments_dict:
+        for comment in comments_dict["data"]:
+            if "id" in comment:
 
-            # get the author
-            for key, values in get_author(comment["id"]).items():
-                comment[key] = values
+                # get the author
+                for key, values in get_author(comment["id"]).items():
+                    comment[key] = values
 
-            # get comments and replies (recursively)
-            replies = get_comments_and_replies(comment["id"])
-            if bool(replies):  # check for empty replies
-                comment["comments"] = replies
+                # get comments and replies (recursively)
+                replies = get_comments_and_replies(comment["id"])
+                if bool(replies):  # check for empty replies
+                    comment["comments"] = replies
 
-            # update and creation time
-            for key, value in get_creation_and_update_time(comment["id"]).items():
-                comment[key] = value
+                # update and creation time
+                for key, value in get_creation_and_update_time(comment["id"]).items():
+                    comment[key] = value
 
-            # get pictures and videos
-            attatchment = get_link_and_preview(comment["id"])
-            if bool(attatchment):  # empty dictionaries evaluate to false
-                if "link" in attatchment:
-                    comment["attatchment"] = attatchment
+                # get pictures and videos
+                attatchment = get_link_and_preview(comment["id"])
+                if bool(attatchment):  # empty dictionaries evaluate to false
+                    if "link" in attatchment:
+                        comment["attatchment"] = attatchment
 
-            likes = get_likes(comment["id"])
-            if likes != 0:
-                comment["likes"] = likes
+                likes = get_likes(comment["id"])
+                if likes != 0:
+                    comment["likes"] = likes
 
-        if "message" in comment:
-            comment["message"] = escape(comment["message"])
+            if "message" in comment:
+                comment["message"] = escape(comment["message"])
 
-        if "story" in comment:
-            comment["story"] = escape(comment["story"])
+            if "story" in comment:
+                comment["story"] = escape(comment["story"])
 
-    return comments_dict["data"]
+        return comments_dict["data"]
+    return {}
 
 def unix_time_to_datetime_str(unix_timestamp_str):
     return datetime.fromtimestamp(int(unix_timestamp_str), tzlocal.get_localzone()).strftime("%H:%M %d/%m/%Y")
 
 def get_creation_and_update_time(element_id):
     # get author for this id
-    times_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=created_time&date_format=U&access_token=" + ACCESS_TOKEN
+    times_url = BASE_FB_API_URL + element_id + "?fields=created_time&date_format=U&access_token=" + ACCESS_TOKEN
     times_dict = read_url_as_dict(times_url)
 
     # convert time to human-readable format
@@ -83,7 +87,7 @@ def get_creation_and_update_time(element_id):
 
 def get_author(element_id):
     # get author for this id
-    author_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=from&access_token=" + ACCESS_TOKEN
+    author_url = BASE_FB_API_URL + element_id + "?fields=from&access_token=" + ACCESS_TOKEN
     author_dict = read_url_as_dict(author_url)
 
     # get the author's picture
@@ -97,7 +101,7 @@ def get_author(element_id):
 
 def get_author_picture(author_id):
     # get author picture for this id
-    author_picture_url = "https://graph.facebook.com/v2.6/" + author_id + "?fields=picture&access_token=" + ACCESS_TOKEN
+    author_picture_url = BASE_FB_API_URL + author_id + "?fields=picture&access_token=" + ACCESS_TOKEN
     author_picture_dict = read_url_as_dict(author_picture_url)
 
     if "picture" in author_picture_dict:
@@ -107,7 +111,7 @@ def get_author_picture(author_id):
 
 def get_link_and_preview(element_id):
     # get author for this id
-    link_url = "https://graph.facebook.com/v2.6/" + element_id + "?fields=link,full_picture&access_token=" + ACCESS_TOKEN
+    link_url = BASE_FB_API_URL + element_id + "?fields=link,full_picture&access_token=" + ACCESS_TOKEN
     link_dict = read_url_as_dict(link_url)
 
     escaped_dict = {}
@@ -154,6 +158,8 @@ def get_additional_data(feed):
 if __name__ == "__main__":
     print("Fetching posts...")
 
+    BASE_FB_API_URL = "https://graph.facebook.com/v2.8/"
+
     # format HTTP GET request for feed stories
     ACCESS_TOKEN = file2string(sys.argv[1])
     GROUP_ID = file2string(sys.argv[2])
@@ -162,13 +168,20 @@ if __name__ == "__main__":
     num_seconds = 7 * 24 * 60 * 60  # a week in seconds = 604800
     a_week_ago_time = round(cur_time - num_seconds)
 
-    feed_url = "https://graph.facebook.com/v2.6/" + GROUP_ID + "/feed?date_format=U&since=" + str(a_week_ago_time) + \
+    feed_url = BASE_FB_API_URL + GROUP_ID + "/feed?date_format=U&since=" + str(a_week_ago_time) + \
                "&until=" + str(cur_time) + "&access_token=" + ACCESS_TOKEN
 
     feed_dict = read_url_as_dict(feed_url)
-    feed_data = get_additional_data(feed_dict["data"])
 
-    with open('feed.json', 'w') as outfile:
-        json.dump(feed_data, outfile, sort_keys=True, indent=4, separators=(',', ': '))
+    if "data" in feed_dict.keys():
+        feed_data = get_additional_data(feed_dict["data"])
 
-    print("Finished fetching posts.")
+        with open('feed.json', 'w') as outfile:
+            json.dump(feed_data, outfile, sort_keys=True, indent=4, separators=(',', ': '))
+
+        print("Finished fetching posts.")
+        sys.exit(0)
+
+    else:
+        print("Error fetching posts.")
+        sys.exit(1)
